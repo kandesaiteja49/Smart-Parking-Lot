@@ -88,6 +88,39 @@ Minimum charge is **1 hour** regardless of duration.
 
 ---
 
+## Database Schema (Conceptual)
+
+```sql
+-- Spots (static config)
+CREATE TABLE parking_spots (
+    spot_id    INT PRIMARY KEY,
+    floor_no   INT NOT NULL,
+    spot_type  ENUM('SMALL','MEDIUM','LARGE') NOT NULL,
+    is_free    BOOLEAN DEFAULT TRUE
+);
+
+-- Vehicles
+CREATE TABLE vehicles (
+    vehicle_number INT PRIMARY KEY,
+    vehicle_type   VARCHAR(20) NOT NULL  -- motorcycle / car / bus
+);
+
+-- Active / Completed Transactions
+CREATE TABLE parking_transactions (
+    ticket_id       INT PRIMARY KEY AUTO_INCREMENT,
+    vehicle_number  INT NOT NULL,
+    spot_id         INT NOT NULL,
+    entry_time      DATETIME NOT NULL,
+    exit_time       DATETIME,            -- NULL = still parked
+    duration_mins   INT,
+    total_fee       DECIMAL(10,2),
+    FOREIGN KEY (vehicle_number) REFERENCES vehicles(vehicle_number),
+    FOREIGN KEY (spot_id)        REFERENCES parking_spots(spot_id)
+);
+```
+
+---
+
 ## How to Run
 
 ### Prerequisites
